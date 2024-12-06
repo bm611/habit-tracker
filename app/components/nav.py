@@ -23,23 +23,32 @@ def navbar() -> rx.Component:
                     )
                 ),
                 rx.dialog.content(
-                    rx.dialog.title("Sync ID", class_name="text-2xl font-bold mb-4"),
+                    rx.dialog.title(
+                        "Sync ID", class_name="text-2xl font-bold mb-4 text-center"
+                    ),
                     rx.hstack(
                         rx.text(
                             State.sync_id,
                             class_name="bg-gray-100 p-3 rounded-lg flex-grow",
                         ),
                         rx.button(
-                            rx.icon("copy"),
+                            rx.cond(
+                                State.copied,
+                                rx.icon(
+                                    "check",
+                                    color="green",
+                                ),
+                                rx.icon("copy"),
+                            ),
                             on_click=State.copy_sync_id,
-                            class_name="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700",
+                            variant="ghost",
                         ),
                         class_name="w-full gap-2 flex justify-center items-center",
                     ),
                     rx.dialog.close(
                         rx.button(
                             "Close",
-                            class_name="mt-4 bg-gray-200 px-4 py-2 rounded-lg text-black hover:bg-gray-300",
+                            class_name="text-black mt-4 bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300",
                         ),
                     ),
                     class_name="bg-white p-6 rounded-2xl shadow-lg",
