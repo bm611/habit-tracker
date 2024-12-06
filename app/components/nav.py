@@ -1,4 +1,5 @@
 import reflex as rx
+from app.state import State
 
 
 def navbar() -> rx.Component:
@@ -13,10 +14,36 @@ def navbar() -> rx.Component:
                 class_name="flex justify-center items-center",
                 spacing="2",
             ),
-            rx.button(
-                "sync",
-                class_name="text-xl md:text-2xl rounded-2xl text-black",
-                variant="ghost",
+            rx.dialog.root(
+                rx.dialog.trigger(
+                    rx.button(
+                        "sync",
+                        class_name="text-xl md:text-2xl rounded-2xl text-black",
+                        variant="ghost",
+                    )
+                ),
+                rx.dialog.content(
+                    rx.dialog.title("Sync ID", class_name="text-2xl font-bold mb-4"),
+                    rx.hstack(
+                        rx.text(
+                            State.sync_id,
+                            class_name="bg-gray-100 p-3 rounded-lg flex-grow",
+                        ),
+                        rx.button(
+                            rx.icon("copy"),
+                            on_click=State.copy_sync_id,
+                            class_name="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700",
+                        ),
+                        class_name="w-full gap-2 flex justify-center items-center",
+                    ),
+                    rx.dialog.close(
+                        rx.button(
+                            "Close",
+                            class_name="mt-4 bg-gray-200 px-4 py-2 rounded-lg text-black hover:bg-gray-300",
+                        ),
+                    ),
+                    class_name="bg-white p-6 rounded-2xl shadow-lg",
+                ),
             ),
             class_name="flex justify-between items-center",
         ),
