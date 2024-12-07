@@ -51,16 +51,23 @@ def habit_calendar_view(habit: str) -> rx.Component:
     return rx.box(
         rx.vstack(
             rx.hstack(
-                rx.text(habit, class_name="text-3xl font-semibold"),
+                rx.text(habit, class_name="text-3xl"),
                 rx.box(
                     rx.hstack(
-                        rx.icon("flame", size=24, color="#FFA500"),
-                        rx.text("0 days", class_name="text-xl text-orange-500"),
+                        rx.icon("flame", size=20, color="#6366f1"),
+                        rx.text(
+                            "0 days", class_name="text-lg text-indigo-500 font-medium"
+                        ),
+                        class_name="flex items-center justify-center",
                     ),
-                    class_name="bg-gray-100 px-4 py-2 rounded-xl",
+                    class_name="bg-indigo-50 px-4 py-2 rounded-2xl shadow-sm ml-2",
+                ),
+                rx.spacer(),
+                rx.button(
+                    rx.icon("trash", color="gray"),
+                    variant="ghost",
                 ),
                 class_name="mt-2 flex items-center",
-                justify="start",
                 width="100%",
             ),
             rx.box(
@@ -69,12 +76,11 @@ def habit_calendar_view(habit: str) -> rx.Component:
                         get_month_grid(year, month, current_date)
                         for year, month in months
                     ],
-                    class_name="min-w-max",  # Ensures content doesn't shrink
-                    justify="start",
+                    class_name="min-w-max backdrop-blur-sm",
                 ),
-                class_name="w-full overflow-x-auto",  # Makes container horizontally scrollable
+                class_name="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-indigo-200 scrollbar-track-transparent",
             ),
-            class_name="p-6 border border-gray-200 rounded-lg w-full shadow-2xl",
+            class_name="p-8 bg-white/50 border border-indigo-100 rounded-xl w-full shadow-2xl",
             align_items="start",
         ),
         class_name="w-full",
@@ -115,7 +121,7 @@ def main_section() -> rx.Component:
         # calendar view
         rx.vstack(
             rx.foreach(State.habits, lambda habit: habit_calendar_view(habit)),
-            class_name="w-full",
+            class_name="w-full mt-6",
         ),
         class_name="flex justify-center items-center",
     )
