@@ -1,18 +1,29 @@
 import reflex as rx
 from app.state import State
 import calendar
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
-def get_month_grid(year: int, month: int) -> rx.Component:
+def get_month_grid(
+    year: int, month: int, current_date: datetime = None
+) -> rx.Component:
     # Get number of days in the month
     num_days = calendar.monthrange(year, month)[1]
+
+    # If this is the current month, only show up to current day
+    if current_date and year == current_date.year and month == current_date.month:
+        num_days = current_date.day
 
     return rx.vstack(
         rx.text(calendar.month_name[month], class_name="text-xl font-semibold mt-4"),
         rx.grid(
             *[
-                rx.button(
-                    class_name="w-4 h-4 bg-gray-200 rounded-sm hover:bg-green-300"
+                rx.tooltip(
+                    rx.button(
+                        class_name="w-4 h-4 bg-gray-200 rounded-sm hover:bg-green-300"
+                    ),
+                    content=f"{calendar.month_name[month]} {day}, {year}",
                 )
                 for day in range(1, num_days + 1)
             ],
@@ -23,7 +34,55 @@ def get_month_grid(year: int, month: int) -> rx.Component:
     )
 
 
+def get_last_three_months() -> tuple[list[tuple[int, int]], datetime]:
+    current_date = datetime.now()
+    months = []
+
+    for i in range(3, -1, -1):
+        date = current_date - relativedelta(months=i)
+        months.append((date.year, date.month))
+
+    return months, current_date
+
+
+def habit_calendar_view(habit: str) -> rx.Component:
+    """Create a calendar view component for a specific habit."""
+    months, current_date = get_last_three_months()
+    return rx.box(
+        rx.vstack(
+            rx.hstack(
+                rx.text(habit, class_name="text-3xl font-semibold"),
+                rx.box(
+                    rx.hstack(
+                        rx.icon("flame", size=24, color="#FFA500"),
+                        rx.text("0 days", class_name="text-xl text-orange-500"),
+                    ),
+                    class_name="bg-gray-100 px-4 py-2 rounded-xl",
+                ),
+                class_name="mt-2 flex items-center",
+                justify="start",
+                width="100%",
+            ),
+            rx.box(
+                rx.hstack(
+                    *[
+                        get_month_grid(year, month, current_date)
+                        for year, month in months
+                    ],
+                    class_name="min-w-max",  # Ensures content doesn't shrink
+                    justify="start",
+                ),
+                class_name="w-full overflow-x-auto",  # Makes container horizontally scrollable
+            ),
+            class_name="p-6 border border-gray-200 rounded-lg w-full shadow-2xl",
+            align_items="start",
+        ),
+        class_name="w-full",
+    )
+
+
 def main_section() -> rx.Component:
+    months, current_date = get_last_three_months()
     return rx.vstack(
         # hero section
         rx.vstack(
@@ -53,17 +112,10 @@ def main_section() -> rx.Component:
             ),
             class_name="w-full flex items-center justify-center",
         ),
-        # habit section
-        rx.foreach(
-            State.habits,
-            lambda habit: rx.text(habit, class_name="text-2xl font-semibold"),
-        ),
         # calendar view
-        rx.hstack(
-            get_month_grid(2024, 10),
-            get_month_grid(2024, 11),
-            get_month_grid(2024, 12),
-            class_name="mt-8",
+        rx.vstack(
+            rx.foreach(State.habits, lambda habit: habit_calendar_view(habit)),
+            class_name="w-full",
         ),
         class_name="flex justify-center items-center",
     )

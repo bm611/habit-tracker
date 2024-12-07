@@ -26,24 +26,52 @@ def navbar() -> rx.Component:
                     rx.dialog.title(
                         "Sync ID", class_name="text-2xl font-bold mb-4 text-center"
                     ),
-                    rx.hstack(
-                        rx.text(
-                            State.sync_id,
-                            class_name="bg-gray-100 p-3 rounded-lg flex-grow",
-                        ),
-                        rx.button(
-                            rx.cond(
-                                State.copied,
-                                rx.icon(
-                                    "check",
-                                    color="green",
-                                ),
-                                rx.icon("copy"),
+                    rx.vstack(
+                        rx.text("Your Sync ID:", class_name="font-semibold"),
+                        rx.hstack(
+                            rx.text(
+                                State.sync_id,
+                                class_name="bg-gray-100 p-3 text-sm md:text-lg rounded-lg flex-grow",
                             ),
-                            on_click=State.copy_sync_id,
-                            variant="ghost",
+                            rx.button(
+                                rx.cond(
+                                    State.copied,
+                                    rx.icon(
+                                        "check",
+                                        color="green",
+                                    ),
+                                    rx.icon("copy"),
+                                ),
+                                on_click=State.copy_sync_id,
+                                variant="ghost",
+                            ),
+                            class_name="w-full gap-2 flex justify-center items-center",
                         ),
-                        class_name="w-full gap-2 flex justify-center items-center",
+                        rx.divider(class_name="my-4"),
+                        rx.text("Enter existing Sync ID:", class_name="font-semibold"),
+                        rx.hstack(
+                            rx.input(
+                                value=State.input_sync_id,
+                                on_change=State.set_input_sync_id,
+                                placeholder="Enter sync ID...",
+                                class_name="rounded-lg flex-grow text-sm md:h-12",
+                            ),
+                            rx.button(
+                                "Sync",
+                                on_click=State.connect_sync_id,
+                                class_name="text-black bg-gray-200 rounded-lg hover:bg-gray-300 active:scale-95 transition-all md:h-12",
+                            ),
+                            class_name="w-full gap-2",
+                        ),
+                        rx.cond(
+                            State.sync_error,
+                            rx.text(
+                                "Invalid sync ID",
+                                color="red",
+                                class_name="text-sm",
+                            ),
+                        ),
+                        class_name="w-full",
                     ),
                     rx.dialog.close(
                         rx.button(
