@@ -100,7 +100,7 @@ def habit_calendar_view(habit: str) -> rx.Component:
                 ),
                 class_name="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-indigo-200 scrollbar-track-transparent",
             ),
-            class_name="p-8 bg-white/50 border border-indigo-100 rounded-xl w-full shadow-2xl",
+            class_name="p-8 bg-white/50 border border-indigo-100 rounded-2xl w-full shadow-2xl",
             align_items="start",
         ),
         class_name="w-full",
@@ -130,7 +130,7 @@ def main_section() -> rx.Component:
         rx.hstack(
             rx.input(
                 value=State.habit,
-                class_name="w-full mt-4 mx-auto text-black text-2xl bg-transparent rounded-lg h-16",
+                class_name="w-full mt-4 mx-auto text-black text-2xl bg-transparent rounded-2xl h-16",
                 on_change=State.set_habit,
             ),
             rx.button(
@@ -139,7 +139,7 @@ def main_section() -> rx.Component:
                     rx.text("create", class_name="text-2xl font-semibold"),
                     class_name="flex items-center justify-center",
                 ),
-                class_name="mt-4 mx-auto text-black bg-gray-200 rounded-lg p-8",
+                class_name="mt-4 mx-auto text-black bg-gray-200 rounded-2xl p-8",
                 on_click=State.handle_submit,
             ),
             class_name="w-full flex items-center justify-center",
