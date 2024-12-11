@@ -53,7 +53,7 @@ def get_last_three_months() -> tuple[list[tuple[int, int]], datetime]:
     current_date = datetime.now()
     months = []
 
-    for i in range(3, -1, -1):
+    for i in range(0, 4):
         date = current_date - relativedelta(months=i)
         months.append((date.year, date.month))
 
