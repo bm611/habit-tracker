@@ -35,8 +35,6 @@ def get_month_grid(
                         on_click=lambda d=day: State.toggle_date(
                             habit, f"{year}-{month:02d}-{d:02d}"
                         ),
-                        transition="all 0.2s ease-in-out",
-                        _hover={"transform": "scale(1.1)"},
                     ),
                     content=f"{calendar.month_name[month]} {day}, {year}",
                 )
@@ -113,14 +111,20 @@ def main_section() -> rx.Component:
     months, current_date = get_last_three_months()
     return rx.vstack(
         # hero section
-        rx.vstack(
-            rx.heading("habit tracker", class_name="text-5xl md:text-6xl"),
-            rx.text(
-                "Create and maintain your habits to build healthy life patterns",
-                class_name="text-lg md:text-xl font-normal mt-2 text-center mx-4 text-gray-400",
+        rx.box(
+            rx.vstack(
+                rx.text(
+                    "habit tracker", class_name="text-5xl md:text-6xl font-extrabold"
+                ),
+                rx.text(
+                    "Create and maintain your habits to build healthy life patterns",
+                    class_name="text-lg md:text-xl font-normal mt-2 text-center mx-4",
+                ),
+                rx.image("/Chill-Time.svg", class_name="w-60 h-60 md:w-80 md:h-80"),
+                spacing="0",
+                class_name="w-full flex items-center justify-center mt-10",
             ),
-            spacing="0",
-            class_name="w-full flex items-center justify-center mt-10",
+            class_name="w-full mt-4 bg-yellow-200 rounded-3xl p-4",
         ),
         # input section
         rx.hstack(
