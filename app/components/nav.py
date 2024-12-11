@@ -6,10 +6,10 @@ def navbar() -> rx.Component:
     return rx.box(
         rx.hstack(
             rx.hstack(
-                rx.icon("repeat-2", size=40),
+                rx.image("/22.svg", class_name="w-8 h-8"),
                 rx.text(
                     "habit",
-                    class_name="text-2xl md:text-3xl font-bold text-indigo-600",
+                    class_name="text-2xl md:text-3xl font-bold",
                 ),
                 class_name="flex justify-center items-center",
                 spacing="2",

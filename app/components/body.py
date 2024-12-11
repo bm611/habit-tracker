@@ -5,13 +5,23 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 
+def get_button_class(habit: str, year: int, month: int, day: int):
+    """Helper function to determine button class based on completion status."""
+    date_str = f"{year}-{month:02d}-{day:02d}"
+    base_classes = "w-4 h-4 rounded-sm transition-all duration-200"
+
+    return rx.cond(
+        State.habit_dates[habit].contains(date_str),
+        f"{base_classes} completed bg-green-400 hover:bg-green-500 shadow-lg shadow-green-400/50",
+        f"{base_classes} bg-gray-200 hover:bg-green-300",
+    )
+
+
 def get_month_grid(
-    year: int, month: int, current_date: datetime = None
+    habit: str, year: int, month: int, current_date: datetime = None
 ) -> rx.Component:
-    # Get number of days in the month
     num_days = calendar.monthrange(year, month)[1]
 
-    # If this is the current month, only show up to current day
     if current_date and year == current_date.year and month == current_date.month:
         num_days = current_date.day
 
@@ -21,7 +31,12 @@ def get_month_grid(
             *[
                 rx.tooltip(
                     rx.button(
-                        class_name="w-4 h-4 bg-gray-200 rounded-sm hover:bg-green-300"
+                        class_name=get_button_class(habit, year, month, day),
+                        on_click=lambda d=day: State.toggle_date(
+                            habit, f"{year}-{month:02d}-{d:02d}"
+                        ),
+                        transition="all 0.2s ease-in-out",
+                        _hover={"transform": "scale(1.1)"},
                     ),
                     content=f"{calendar.month_name[month]} {day}, {year}",
                 )
@@ -48,6 +63,12 @@ def get_last_three_months() -> tuple[list[tuple[int, int]], datetime]:
 def habit_calendar_view(habit: str) -> rx.Component:
     """Create a calendar view component for a specific habit."""
     months, current_date = get_last_three_months()
+
+    # Using rx.cond for the streak count
+    streak_count = rx.cond(
+        State.habit_dates.contains(habit), State.habit_dates[habit].length(), 0
+    )
+
     return rx.box(
         rx.vstack(
             rx.hstack(
@@ -56,7 +77,8 @@ def habit_calendar_view(habit: str) -> rx.Component:
                     rx.hstack(
                         rx.icon("flame", size=20, color="#6366f1"),
                         rx.text(
-                            "0 days", class_name="text-lg text-indigo-500 font-medium"
+                            f"{streak_count} days",
+                            class_name="text-lg text-indigo-500 font-medium",
                         ),
                         class_name="flex items-center justify-center",
                     ),
@@ -73,7 +95,7 @@ def habit_calendar_view(habit: str) -> rx.Component:
             rx.box(
                 rx.hstack(
                     *[
-                        get_month_grid(year, month, current_date)
+                        get_month_grid(habit, year, month, current_date)
                         for year, month in months
                     ],
                     class_name="min-w-max backdrop-blur-sm",

@@ -1,0 +1,23 @@
+@keyframes pop {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.8);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.calendar-button {
+    transition: all 0.2s ease;
+}
+
+.calendar-button:active {
+    transform: scale(0.95);
+}
+
+.calendar-button.completed {
+    animation: pop 0.2s ease;
+}
