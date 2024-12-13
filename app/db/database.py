@@ -55,6 +55,17 @@ def create_user(user_id: str):
         conn.close()
 
 
+def user_exists(user_id: str) -> bool:
+    """Check if a user exists in the database."""
+    conn = sqlite3.connect(DATABASE_NAME)
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT 1 FROM users WHERE user_id = ?", (user_id,))
+        return cursor.fetchone() is not None
+    finally:
+        conn.close()
+
+
 def add_habit(user_id: str, habit_name: str):
     """Add a new habit for a user."""
     conn = sqlite3.connect(DATABASE_NAME)

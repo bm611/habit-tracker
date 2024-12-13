@@ -8,6 +8,7 @@ from app.db.database import (
     toggle_habit_date,
     load_user_data,
     delete_habit,
+    user_exists,
 )
 
 
@@ -23,11 +24,15 @@ class State(rx.State):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         init_db()
-        create_user(self.sync_id)
-        # Load existing data for the user
-        loaded_habits, loaded_dates = load_user_data(self.sync_id)
-        self.habits = loaded_habits
-        self.habit_dates = loaded_dates
+        # Generate new sync_id for new users
+        if not self.sync_id:
+            self.sync_id = str(uuid.uuid4())
+            create_user(self.sync_id)
+        elif user_exists(self.sync_id):
+            # Load existing data only if user exists
+            loaded_habits, loaded_dates = load_user_data(self.sync_id)
+            self.habits = loaded_habits
+            self.habit_dates = loaded_dates
 
     def set_habit(self, value: str):
         self.habit = value
@@ -70,12 +75,14 @@ class State(rx.State):
         if len(self.input_sync_id) == 36:
             try:
                 uuid.UUID(self.input_sync_id)
-                self.sync_id = self.input_sync_id
-                self.input_sync_id = ""
-                self.sync_error = False
-                # Load data for the new sync_id
-                create_user(self.sync_id)
-                self.habits, self.habit_dates = load_user_data(self.sync_id)
+                if user_exists(self.input_sync_id):
+                    self.sync_id = self.input_sync_id
+                    self.input_sync_id = ""
+                    self.sync_error = False
+                    # Load data for the existing sync_id
+                    self.habits, self.habit_dates = load_user_data(self.sync_id)
+                else:
+                    self.sync_error = True  # User doesn't exist
             except ValueError:
                 self.sync_error = True
         else:
