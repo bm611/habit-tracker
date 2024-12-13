@@ -84,8 +84,13 @@ def habit_calendar_view(habit: str) -> rx.Component:
                 ),
                 rx.spacer(),
                 rx.button(
-                    rx.icon("trash", color="gray"),
+                    rx.icon(
+                        "trash",
+                        color="gray",
+                        class_name="hover:text-red-500 transition-colors",
+                    ),
                     variant="ghost",
+                    on_click=lambda h=habit: State.delete_habit(h),
                 ),
                 class_name="mt-2 flex items-center",
                 width="100%",
@@ -148,6 +153,7 @@ def main_section() -> rx.Component:
         rx.vstack(
             rx.foreach(State.habits, lambda habit: habit_calendar_view(habit)),
             class_name="w-full mt-6",
+            id="calendar-section",
         ),
-        class_name="flex justify-center items-center",
+        class_name="flex justify-center items-center mb-10",
     )
