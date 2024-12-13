@@ -36,6 +36,10 @@ reflex run
 3. Click on calendar dates to mark habits as complete/incomplete
 4. Track your progress with the streak counter
 
+## Inspiration
+
+https://x.com/thestonechat/status/1863729626326921316
+
 
 ## Contributing
 
