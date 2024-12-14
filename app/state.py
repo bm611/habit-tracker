@@ -16,7 +16,8 @@ class State(rx.State):
     habit: str = ""
     habits: list[str] = []
     habit_dates: dict[str, set[str]] = {}
-    sync_id: str = str(uuid.uuid4())
+    # Use LocalStorage for sync_id with a default empty string
+    sync_id: str = rx.LocalStorage("", name="habit_sync_id")
     input_sync_id: str = ""
     copied: bool = False
     sync_error: bool = False
@@ -24,12 +25,16 @@ class State(rx.State):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         init_db()
-        # Generate new sync_id for new users
+
+    async def load_initial_data(self):
+        """Load initial data based on sync_id"""
+        # Generate new sync_id for new users if none exists in localStorage
         if not self.sync_id:
-            self.sync_id = str(uuid.uuid4())
-            create_user(self.sync_id)
+            new_sync_id = str(uuid.uuid4())
+            self.sync_id = new_sync_id
+            create_user(new_sync_id)
         elif user_exists(self.sync_id):
-            # Load existing data only if user exists
+            # Load existing data if user exists
             loaded_habits, loaded_dates = load_user_data(self.sync_id)
             self.habits = loaded_habits
             self.habit_dates = loaded_dates
@@ -76,7 +81,7 @@ class State(rx.State):
             try:
                 uuid.UUID(self.input_sync_id)
                 if user_exists(self.input_sync_id):
-                    self.sync_id = self.input_sync_id
+                    self.sync_id = self.input_sync_id  # This will update localStorage
                     self.input_sync_id = ""
                     self.sync_error = False
                     # Load data for the existing sync_id
