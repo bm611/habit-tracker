@@ -8,7 +8,27 @@ from dateutil.relativedelta import relativedelta
 def get_button_class(habit: str, year: int, month: int, day: int):
     """Helper function to determine button class based on completion status."""
     date_str = f"{year}-{month:02d}-{day:02d}"
+    current_date = datetime.now()
+    button_date = datetime(year, month, day)
+
+    is_current_day = (
+        year == current_date.year
+        and month == current_date.month
+        and day == current_date.day
+    )
+
+    is_future = button_date.date() > current_date.date()
+
     base_classes = "w-4 h-4 rounded-sm transition-all duration-200"
+
+    # Add current day indicator classes
+    if is_current_day:
+        current_day_classes = "ring-2 ring-indigo-500 ring-offset-2"
+        base_classes = f"{base_classes} {current_day_classes}"
+
+    # Future dates should be grayed out and not interactive
+    if is_future:
+        return f"{base_classes} bg-gray-100 opacity-50 cursor-not-allowed"
 
     return rx.cond(
         State.habit_dates[habit].contains(date_str),
@@ -21,9 +41,7 @@ def get_month_grid(
     habit: str, year: int, month: int, current_date: datetime = None
 ) -> rx.Component:
     num_days = calendar.monthrange(year, month)[1]
-
-    if current_date and year == current_date.year and month == current_date.month:
-        num_days = current_date.day
+    current = datetime.now()
 
     return rx.vstack(
         rx.text(calendar.month_name[month], class_name="text-xl font-semibold mt-4"),
@@ -35,6 +53,8 @@ def get_month_grid(
                         on_click=lambda d=day: State.toggle_date(
                             habit, f"{year}-{month:02d}-{d:02d}"
                         ),
+                        # Disable button for future dates
+                        disabled=datetime(year, month, day).date() > current.date(),
                     ),
                     content=f"{calendar.month_name[month]} {day}, {year}",
                 )
