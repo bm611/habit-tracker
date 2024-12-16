@@ -1,6 +1,7 @@
 import reflex as rx
 import uuid
 import asyncio
+from datetime import datetime
 from app.db.database import (
     init_db,
     create_user,
@@ -41,6 +42,15 @@ class State(rx.State):
 
     def set_habit(self, value: str):
         self.habit = value
+
+    def mark_today(self, habit: str):
+        """Mark today's date as complete for the given habit."""
+        today = datetime.now().strftime("%Y-%m-%d")
+        if habit not in self.habit_dates:
+            self.habit_dates[habit] = set()
+        self.habit_dates[habit].add(today)
+        # Save to database
+        toggle_habit_date(self.sync_id, habit, today)
 
     def handle_submit(self):
         self.habits.append(self.habit)

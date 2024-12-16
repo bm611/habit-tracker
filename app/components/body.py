@@ -90,7 +90,11 @@ def habit_calendar_view(habit: str) -> rx.Component:
     return rx.box(
         rx.vstack(
             rx.hstack(
-                rx.text(habit, class_name="text-3xl"),
+                rx.text(
+                    habit,
+                    class_name="text-2xl md:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-indigo-400 bg-clip-text text-transparent",
+                ),
+                rx.spacer(),
                 rx.box(
                     rx.hstack(
                         rx.icon("flame", size=20, color="#6366f1"),
@@ -98,22 +102,86 @@ def habit_calendar_view(habit: str) -> rx.Component:
                             f"{streak_count} days",
                             class_name="text-lg text-indigo-500 font-medium",
                         ),
+                        class_name="bg-indigo-50/80 backdrop-blur-sm px-4 py-2 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 mx-auto flex justify-center items-center",
+                    ),
+                    class_name="w-full flex justify-center items-center",
+                ),
+                rx.box(
+                    rx.hstack(
+                        rx.button(
+                            rx.image(
+                                "/2.svg",
+                                class_name="w-7 h-7 hover:opacity-75 hover:[filter:invert(93%)_sepia(7%)_saturate(1202%)_hue-rotate(95deg)_brightness(99%)_contrast(87%)]",
+                            ),
+                            variant="ghost",
+                            on_click=lambda h=habit: State.mark_today(h),
+                            class_name="hover:bg-indigo-50/50 rounded-xl transition-all duration-200",
+                        ),
+                        rx.dialog.root(
+                            rx.dialog.trigger(
+                                rx.button(
+                                    rx.icon(
+                                        "trash",
+                                        color="gray",
+                                        class_name="hover:text-red-500 transition-colors",
+                                    ),
+                                    variant="ghost",
+                                    class_name="hover:bg-red-50/50 rounded-xl transition-all duration-200",
+                                ),
+                            ),
+                            rx.dialog.content(
+                                rx.dialog.title(
+                                    "Delete Habit",
+                                    class_name="text-3xl font-bold mb-2 text-center bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent",
+                                ),
+                                rx.vstack(
+                                    rx.box(
+                                        rx.icon(
+                                            "octagon-alert", size=24, color="#ef4444"
+                                        ),
+                                        rx.text(
+                                            "Are you sure you want to delete this habit?",
+                                            class_name="text-gray-700 font-medium ml-2",
+                                        ),
+                                        class_name="flex items-center justify-center mt-4",
+                                    ),
+                                    rx.text(
+                                        "This action cannot be undone.",
+                                        class_name="text-gray-500 text-sm mt-2",
+                                    ),
+                                    rx.box(
+                                        rx.text(
+                                            habit,
+                                            class_name="font-bold text-xl",
+                                        ),
+                                        class_name="mt-4 p-4 bg-red-50/50 backdrop-blur-sm rounded-xl border border-red-100 text-center",
+                                    ),
+                                    rx.hstack(
+                                        rx.dialog.close(
+                                            rx.button(
+                                                "Cancel",
+                                                class_name="bg-white/80 backdrop-blur-sm border-2 border-gray-200 hover:bg-gray-50 text-gray-800 px-6 py-2.5 rounded-xl font-medium transition-all duration-200",
+                                            ),
+                                        ),
+                                        rx.button(
+                                            "Delete",
+                                            on_click=lambda h=habit: State.delete_habit(
+                                                h
+                                            ),
+                                            class_name="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-2.5 rounded-xl font-medium shadow-lg shadow-red-500/30 transition-all duration-200",
+                                        ),
+                                        class_name="mt-4 space-x-4 w-full justify-end",
+                                    ),
+                                    class_name="w-full",
+                                ),
+                                class_name="bg-white/95 backdrop-blur-sm p-6 rounded-3xl shadow-2xl border border-gray-100 max-w-md mx-auto",
+                            ),
+                        ),
                         class_name="flex items-center justify-center",
                     ),
-                    class_name="bg-indigo-50 px-4 py-2 rounded-2xl shadow-sm ml-2",
+                    class_name="bg-indigo-50/80 backdrop-blur-sm px-6 py-2 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200",
                 ),
-                rx.spacer(),
-                rx.button(
-                    rx.icon(
-                        "trash",
-                        color="gray",
-                        class_name="hover:text-red-500 transition-colors",
-                    ),
-                    variant="ghost",
-                    on_click=lambda h=habit: State.delete_habit(h),
-                ),
-                class_name="mt-2 flex items-center",
-                width="100%",
+                class_name="w-full items-center justify-center",
             ),
             rx.box(
                 rx.hstack(
@@ -123,9 +191,9 @@ def habit_calendar_view(habit: str) -> rx.Component:
                     ],
                     class_name="min-w-max backdrop-blur-sm",
                 ),
-                class_name="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-indigo-200 scrollbar-track-transparent",
+                class_name="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-indigo-200 scrollbar-track-transparent mt-2",
             ),
-            class_name="p-8 bg-white/50 border border-indigo-100 rounded-2xl w-full shadow-2xl",
+            class_name="p-8 bg-white/50 backdrop-blur-sm border border-indigo-100 rounded-2xl w-full shadow-2xl",
             align_items="start",
         ),
         class_name="w-full",
